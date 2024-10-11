@@ -15,5 +15,5 @@ public interface HmacService {
    * @param key       the key for generating the HMAC.
    * @return a string containing the generated HMAC in hexadecimal format.
    */
-  String generateHmac(HmacAlgorithms algorithm, String data, String key);
+  String generateHmac(HmacAlgorithms algorithm, String data, byte[] key);
 }

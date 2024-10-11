@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 public class HashingServiceImpl implements HashingService {
 
   @Value("${signature.secret-key}")
-  private String secretKey;
+  private byte[] secretKey;
 
   @Autowired
   private HmacService hmacService;
