@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.apache.commons.collections4.MapUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,7 +30,7 @@ public class HashingServiceImpl implements HashingService {
   @Override
   public SignatureResponse getFormat(Map<String, String> requestParams) {
     return Optional.ofNullable(requestParams)
-        .filter(params -> !params.isEmpty())
+        .filter(MapUtils::isNotEmpty)
         .map(this::formatParamsToString)
         .filter(StringUtils::isNotEmpty)
         .map(this::generateHmac)
@@ -39,10 +40,14 @@ public class HashingServiceImpl implements HashingService {
 
   private String formatParamsToString(Map<String, String> params) {
     return params.entrySet().stream()
-        .filter(entry -> entry.getKey() != null && entry.getValue() != null)
+        .filter(this::isEntryValid)
         .sorted(Map.Entry.comparingByKey())
         .map(entry -> entry.getKey() + Symbols.EQUALS + entry.getValue())
         .collect(Collectors.joining(Symbols.AND));
+  }
+
+  private boolean isEntryValid(Map.Entry<String, String> entry) {
+    return entry.getKey() != null && entry.getValue() != null;
   }
 
   private String generateHmac(String data) {
