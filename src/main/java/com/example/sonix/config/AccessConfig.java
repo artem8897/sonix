@@ -7,9 +7,9 @@ import org.springframework.stereotype.Component;
 public class AccessConfig {
 
   @Value("${token.key}")
-  private String secretKey;
+  private byte[] secretKey;
 
-  public String getSecretKey() {
+  public byte[] getSecretKey() {
     return secretKey;
   }
 }

@@ -9,7 +9,6 @@ import com.example.sonix.model.SignatureResponse;
 import com.example.sonix.service.HashingService;
 import com.example.sonix.service.HmacService;
 import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -31,7 +30,8 @@ public class HashingServiceImpl implements HashingService {
     return Optional.ofNullable(requestParams)
         .map(this::formatParamsToString)
         .map(this::generateHmac)
-        .map(hmac -> new SignatureResponse(ResponseStatus.SUCCESS, List.of(new Signature(hmac))))
+        .map(hmac -> new SignatureResponse(ResponseStatus.SUCCESS,
+            Collections.singletonList(new Signature(hmac))))
         .orElse(new SignatureResponse(ResponseStatus.BAD_ENTITY_FOR_HASH, Collections.emptyList()));
   }
 

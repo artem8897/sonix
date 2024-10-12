@@ -3,6 +3,8 @@ package com.example.sonix.interceptor;
 import static com.example.sonix.constant.HttpHeaderConstants.TOKEN_HEADER;
 
 import com.example.sonix.config.AccessConfig;
+import java.util.Arrays;
+import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,15 +18,23 @@ public class TokenInterceptor implements HandlerInterceptor {
   private AccessConfig accessConfig;
 
   @Override
-  public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
-      Object handler) {
+  public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+    return isTokenValid(request.getHeader(TOKEN_HEADER)) || denyAccess(response);
+  }
 
-    String token = request.getHeader(TOKEN_HEADER);
+  private boolean isTokenValid(String tokenHeader) {
+    return Optional.ofNullable(tokenHeader)
+        .map(String::getBytes)
+        .filter(this::isMatchingSecretKey)
+        .isPresent();
+  }
 
-    if (token == null || !token.equals(accessConfig.getSecretKey())) {
-      response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-      return false;
-    }
-    return true;
+  private boolean isMatchingSecretKey(byte[] token) {
+    return Arrays.equals(token, accessConfig.getSecretKey());
+  }
+
+  private boolean denyAccess(HttpServletResponse response) {
+    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+    return false;
   }
 }
