@@ -12,6 +12,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -28,15 +29,17 @@ public class HashingServiceImpl implements HashingService {
   @Override
   public SignatureResponse getFormat(Map<String, String> requestParams) {
     return Optional.ofNullable(requestParams)
+        .filter(params -> !params.isEmpty())
         .map(this::formatParamsToString)
+        .filter(StringUtils::isNotEmpty)
         .map(this::generateHmac)
-        .map(hmac -> new SignatureResponse(ResponseStatus.SUCCESS,
-            Collections.singletonList(new Signature(hmac))))
-        .orElse(new SignatureResponse(ResponseStatus.BAD_ENTITY_FOR_HASH, Collections.emptyList()));
+        .map(this::buildSuccessResponse)
+        .orElse(buildErrorResponse());
   }
 
   private String formatParamsToString(Map<String, String> params) {
     return params.entrySet().stream()
+        .filter(entry -> entry.getKey() != null && entry.getValue() != null)
         .sorted(Map.Entry.comparingByKey())
         .map(entry -> entry.getKey() + Symbols.EQUALS + entry.getValue())
         .collect(Collectors.joining(Symbols.AND));
@@ -44,5 +47,14 @@ public class HashingServiceImpl implements HashingService {
 
   private String generateHmac(String data) {
     return hmacService.generateHmac(HMAC_SHA_256, data, secretKey);
+  }
+
+  private SignatureResponse buildSuccessResponse(String hmac) {
+    return new SignatureResponse(ResponseStatus.SUCCESS,
+        Collections.singletonList(new Signature(hmac)));
+  }
+
+  private SignatureResponse buildErrorResponse() {
+    return new SignatureResponse(ResponseStatus.BAD_ENTITY_FOR_HASH, Collections.emptyList());
   }
 }
