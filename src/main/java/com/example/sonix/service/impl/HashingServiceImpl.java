@@ -42,8 +42,8 @@ public class HashingServiceImpl implements HashingService {
     return params.entrySet().stream()
         .filter(this::isEntryValid)
         .sorted(Map.Entry.comparingByKey())
-        .map(entry -> entry.getKey() + Symbols.EQUALS + entry.getValue())
-        .collect(Collectors.joining(Symbols.AND));
+        .map(entry -> entry.getKey() + Symbols.EQUALS_SYMBOL + entry.getValue())
+        .collect(Collectors.joining(Symbols.AND_SYMBOL));
   }
 
   private boolean isEntryValid(Map.Entry<String, String> entry) {

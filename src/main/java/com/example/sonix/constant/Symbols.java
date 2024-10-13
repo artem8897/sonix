@@ -6,7 +6,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class Symbols {
 
-  public static final String EQUALS = "=";
-  public static final String AND = "&";
+  public static final String EQUALS_SYMBOL = "=";
+  public static final String AND_SYMBOL = "&";
 
 }

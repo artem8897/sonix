@@ -7,10 +7,12 @@ import java.util.Arrays;
 import java.util.Optional;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+@Slf4j
 @Component
 public class TokenInterceptor implements HandlerInterceptor {
 
@@ -18,7 +20,9 @@ public class TokenInterceptor implements HandlerInterceptor {
   private AccessConfig accessConfig;
 
   @Override
-  public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+  public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
+      Object handler) {
+
     return isTokenValid(request.getHeader(TOKEN_HEADER)) || denyAccess(response);
   }
 
@@ -35,6 +39,7 @@ public class TokenInterceptor implements HandlerInterceptor {
 
   private boolean denyAccess(HttpServletResponse response) {
     response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+    log.warn("Invalid or missing Token in request");
     return false;
   }
 }
