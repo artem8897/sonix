@@ -4,7 +4,7 @@ import static org.apache.commons.codec.digest.HmacAlgorithms.HMAC_SHA_256;
 
 import com.example.sonix.constant.ResponseStatus;
 import com.example.sonix.constant.Symbols;
-import com.example.sonix.model.Signature;
+import com.example.sonix.model.Result;
 import com.example.sonix.model.SignatureResponse;
 import com.example.sonix.service.HashingService;
 import com.example.sonix.service.HmacService;
@@ -56,7 +56,7 @@ public class HashingServiceImpl implements HashingService {
 
   private SignatureResponse buildSuccessResponse(String hmac) {
     return new SignatureResponse(ResponseStatus.SUCCESS,
-        Collections.singletonList(new Signature(hmac)));
+        Collections.singletonList(new Result(hmac)));
   }
 
   private SignatureResponse buildErrorResponse() {

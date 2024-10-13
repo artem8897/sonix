@@ -11,6 +11,6 @@ import lombok.NoArgsConstructor;
 public class SignatureResponse {
 
   private String status;
-  private List<Signature> result;
+  private List<Result> result;
 
 }
